@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python/
 # Copyright (c) 2015, Rethink Robotics, Inc.
 
 # Using this CvBridge Tutorial for converting
@@ -16,18 +16,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 # OpenCV2 for saving an image
 import sys
-#sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
-ros_path = '/opt/ros/kinetic/lib/python2.7/dist-packages'
-
-if ros_path in sys.path:
-
-    sys.path.remove(ros_path)
-
 import cv2
-
-#sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
-
-#import cv2
 
 # Instantiate CvBridge
 bridge = CvBridge()
@@ -40,33 +29,44 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
-from keras.models import Sequential, load_model
-from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization, Lambda, Cropping2D, ELU
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers.convolutional import Convolution2D
-from keras import regularizers, optimizers, initializers
-from keras.callbacks import EarlyStopping,ModelCheckpoint, TensorBoard, Callback
+# from keras.models import Sequential, load_model
+# from keras.preprocessing.image import ImageDataGenerator
+# from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization, Lambda, Cropping2D, ELU
+# from keras.layers import Conv2D, MaxPooling2D
+# from keras.layers.convolutional import Convolution2D
+# from keras import regularizers, optimizers, initializers
+# from keras.callbacks import EarlyStopping,ModelCheckpoint, TensorBoard, Callback
 print("Done importing data")
 
 
-def image_callback(msg):
-    image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
-    print("Received an image!")
-    #image = imgmsg_to_cv2(msg)
-    #np_arr = np.fromstring(msg, np.uint8) 
-    #np_img = np_arr.reshape((480, 640, 3)) 
-    print("0")
-    #image=image[50:140, 0:320]
-    print("1")
-    # Resize to 200x66 pixel
-    image = cv2.resize(msg, (200,66), interpolation=cv2.INTER_AREA)
-    print("2")
-    images=np.reshape(image, (1, 66,200,3))    
+def image_callback(img):
+    # print(img)
+    img = CvBridge().imgmsg_to_cv2(img,desired_encoding="bgr8")
+    # print(img.shape)
+    # print("Received an image!")
+    # image = img[50:140, 0:320]
+    # print(image.shape)                
+    # # Resize to 200x66 pixel
+    # image1 = cv2.resize(image, (200,66), interpolation=cv2.INTER_AREA)
+    # print(image1.shape)
+    # images=np.reshape(image1, (1, 66,200,3))
+        
     # image.reshape()
-    val=model.predict(images)
-    print("3")
-    print(val)
+    # val=model.predict(images)
+    # print(val)
+    # #np_arr = np.fromstring(msg, np.uint8) 
+    # #np_img = np_arr.reshape((480, 640, 3)) 
+    # print("0")
+    # #image=image[50:140, 0:320]
+    # print("1")
+    # # Resize to 200x66 pixel
+    # image = cv2.resize(msg, (200,66), interpolation=cv2.INTER_AREA)
+    # print("2")
+    # images=np.reshape(image, (1, 66,200,3))    
+    # # image.reshape()
+    # val=model.predict(images)
+    # print("3")
+    # print(val)
 
 def main():
     rospy.init_node('image_listener')
@@ -75,9 +75,9 @@ def main():
     print(sys.version)
     # Define your image topic
     image_topic = "/synchronized_image_raw"
-    model=load_model('/home/akashbaskaran/CNN/model-e007.h5')
+    # model=load_model('/home/akashbaskaran/CNN/model-e007.h5')
 
-    print(model.summary())
+    # print(model.summary())
 
     # Set up your subscriber and define its callback
     rospy.Subscriber(image_topic, Image, image_callback)

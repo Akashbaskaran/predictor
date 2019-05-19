@@ -1,49 +1,112 @@
-#!/usr/bin/env python
-from __future__ import print_function
-
-import roslib
-roslib.load_manifest('my_package')
-import sys
+#!/usr/bin/env python3
 import rospy
-import cv2
-from std_msgs.msg import String
+# ROS Image message
 from sensor_msgs.msg import Image
+# ROS Image message -> OpenCV2 image converter
 from cv_bridge import CvBridge, CvBridgeError
+# OpenCV2 for saving an image
+import sys
+import cv2
 
-class image_converter:
+# Instantiate CvBridge
+bridge = CvBridge()
+import glob
+import os
+import pandas as pd
+import datetime
+import matplotlib.pyplot as plt
 
-  def __init__(self):
-    self.image_pub = rospy.Publisher("image_topic_2",Image)
+import matplotlib.image as mpimg
+import numpy as np
 
-    self.bridge = CvBridge()
-    self.image_sub = rospy.Subscriber("/synchronized_image_raw",Image,self.callback)
+# from keras.models import Sequential, load_model
+# from keras.preprocessing.image import ImageDataGenerator
+# from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization, Lambda, Cropping2D, ELU
+# from keras.layers import Conv2D, MaxPooling2D
+# from keras.layers.convolutional import Convolution2D
+# from keras import regularizers, optimizers, initializers
+# from keras.callbacks import EarlyStopping,ModelCheckpoint, TensorBoard, Callback
+print("Done importing data")
 
-  def callback(self,data):
-    try:
-      cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-    except CvBridgeError as e:
-      print(e)
+import subprocess
+import execnet
+import cv2
+from cv_bridge import CvBridge, CvBridgeError
+def call_python_version(Version, Module, Function, ArgumentList):
+    gw      = execnet.makegateway("popen//python=python%s" % Version)
+    channel = gw.remote_exec("""
+        from %s import %s as the_function
+        channel.send(the_function(*channel.receive()))
+    """ % (Module, Function))
+    channel.send(ArgumentList)
+    return channel.receive()
 
-    (rows,cols,channels) = cv_image.shape
-    if cols > 60 and rows > 60 :
-      cv2.circle(cv_image, (50,50), 10, 255)	
 
-    cv2.imshow("Image window", cv_image)
-    cv2.waitKey(3)
+def image_callback(img):
+    print("1")
+    val=np.frombuffer(img)
+    # result = call_python_version("2.7", "my_module", "my_function",[img]) 
+    print(result)
+    # img = CvBridge().imgmsg_to_cv2(img,desired_encoding="bgr8")
+    # print(img.shape)
+    # print("Received an image!")
+    # image = img[50:140, 0:320]
+    # print(image.shape)                
+    # # Resize to 200x66 pixel
+    # image1 = cv2.resize(image, (200,66), interpolation=cv2.INTER_AREA)
+    # print(image1.shape)
+    # images=np.reshape(image1, (1, 66,200,3))
+        
+    # image.reshape()
+    # val=model.predict(images)
+    # print(val)
+    # #np_arr = np.fromstring(msg, np.uint8) 
+    # #np_img = np_arr.reshape((480, 640, 3)) 
+    # print("0")
+    # #image=image[50:140, 0:320]
+    # print("1")
+    # # Resize to 200x66 pixel
+    # image = cv2.resize(msg, (200,66), interpolation=cv2.INTER_AREA)
+    # print("2")
+    # images=np.reshape(image, (1, 66,200,3))    
+    # # image.reshape()
+    # val=model.predict(images)
+    # print("3")
+    # print(val)
 
-    try:
-      self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
-    except CvBridgeError as e:
-      print(e)
+def main():
+    rospy.init_node('image_listener')
+    print('I am listening')
+    import sys
+    print(sys.version)
+    # Define your image topic
+    image_topic = "/synchronized_image_raw"
+    # model=load_model('/home/akashbaskaran/CNN/model-e007.h5')
 
-def main(args):
-  ic = image_converter()
-  rospy.init_node('image_converter', anonymous=True)
-  try:
+    # print(model.summary())
+
+    # Set up your subscriber and define its callback
+    rospy.Subscriber(image_topic, Image, image_callback)
+    # Spin until ctrl + c
     rospy.spin()
-  except KeyboardInterrupt:
-    print("Shutting down")
-  cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
+
+
+
+
+# image = cv2.imread('/home/akashbaskaran/CNN/frame000225.jpg')
+# a=1
+
+# result = call_python_version("2.7", "my_module", "my_function",[]) 
+# # print(result) 
+# # result = call_python_version("2.7", "my_module", "my_function",  
+# #                              ["Mrs", "Wolf"]) 
+# print(result)
+# # a=5
+# b=6
+# python3_command = "/home/akashbaskaran/catkin_ws/src/predictor/scripts/test.py a b"  # launch your python2 script using bash
+
+# process = subprocess.Popen(python3_command.split(), stdout=subprocess.PIPE)
+# output, error = process.communicate()  # receive output from the python2 script
