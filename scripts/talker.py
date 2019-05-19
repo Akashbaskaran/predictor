@@ -10,13 +10,17 @@
 
 # rospy for the subscriber
 import rospy
+import sys
+#sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 # ROS Image message
 from sensor_msgs.msg import Image
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+import cv2
 # ROS Image message -> OpenCV2 image converter
 from cv_bridge import CvBridge, CvBridgeError
 # OpenCV2 for saving an image
 import sys
-import cv2
+#import cv2
 
 # Instantiate CvBridge
 bridge = CvBridge()
@@ -28,6 +32,7 @@ import matplotlib.pyplot as plt
 
 import matplotlib.image as mpimg
 import numpy as np
+import sys
 
 # from keras.models import Sequential, load_model
 # from keras.preprocessing.image import ImageDataGenerator
@@ -42,6 +47,7 @@ print("Done importing data")
 def image_callback(img):
     # print(img)
     img = CvBridge().imgmsg_to_cv2(img,desired_encoding="bgr8")
+    print("recieved an image",img.shape)
     # print(img.shape)
     # print("Received an image!")
     # image = img[50:140, 0:320]
